@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ขอเป็นแฟนได้ไหม 💗</title>
+
+<!-- ฟอนต์น่ารัก (ต้องต่ออินเทอร์เน็ตตอนเปิดหน้าเว็บ) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Itim&family=Mali:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== 1) สีทั้งหมดอยู่ตรงนี้ อยากเปลี่ยนสีแก้ที่นี่ที่เดียว ===== */
+  :root {
+    --pink: #ff6f9c;        /* ชมพูเข้ม ใช้กับปุ่ม */
+    --pink-deep: #e0467c;
+    --pink-soft: #ffd9e6;   /* ชมพูอ่อน */
+    --lavender: #e6dcff;    /* ม่วงลาเวนเดอร์ */
+    --peach: #ffe6d6;       /* พีช */
+    --ink: #5a2d45;        /* สีตัวหนังสือ (ม่วงเข้มอมชมพู) */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Mali', sans-serif;
+    color: var(--ink);
+    /* พื้นหลังไล่สี ชมพู → ม่วง → พีช */
+    background: linear-gradient(135deg, var(--pink-soft), var(--lavender) 55%, var(--peach));
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-x: hidden;
+  }
+
+  /* ===== 2) หัวใจลอยเป็นพื้นหลัง (JavaScript ด้านล่างสร้างให้) ===== */
+  .floaty {
+    position: fixed;
+    bottom: -40px;
+    pointer-events: none;
+    opacity: .55;
+    animation: floatUp linear infinite;
+    z-index: 0;
+  }
+  @keyframes floatUp {
+    to { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+
+  /* ===== 3) การ์ดตรงกลาง ===== */
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(6px);
+    border-radius: 36px;
+    padding: 32px 26px 36px;
+    box-shadow: 0 18px 50px rgba(224, 70, 124, .22);
+  }
+
+  /* รูปแบบโพลารอยด์ เอียงนิดๆ */
+  .polaroid {
+    width: 210px;
+    margin: 0 auto 22px;
+    padding: 10px 10px 34px;
+    background: #fff;
+    border-radius: 10px;
+    transform: rotate(-3deg);
+    box-shadow: 0 8px 22px rgba(90, 45, 69, .18);
+  }
+  .polaroid .frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    background: var(--pink-soft);
+    display: grid;
+    place-items: center;
+    font-size: 64px;
+    overflow: hidden;
+  }
+  .polaroid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  h1 {
+    font-family: 'Itim', cursive;
+    font-weight: 400;
+    font-size: 2.1rem;
+    line-height: 1.3;
+    color: var(--pink-deep);
+    margin-bottom: 8px;
+  }
+  .sub { font-size: 1rem; margin-bottom: 26px; }
+
+  /* ===== 4) ปุ่ม ===== */
+  .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  button {
+    font-family: 'Itim', cursive;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 34px;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+  .yes {
+    color: #fff;
+    background: linear-gradient(135deg, #ff8fb1, var(--pink-deep));
+    box-shadow: 0 8px 20px rgba(224, 70, 124, .4);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  .yes:hover { transform: scale(1.08); }
+
+  .no {
+    color: #9b7a8b;
+    background: #f1e6ec;
+    box-shadow: inset 0 0 0 2px #e3d2db;
+  }
+  .no.shake { animation: shake .4s; }
+
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+  @keyframes shake {
+    20%, 60% { transform: translateX(-7px); }
+    40%, 80% { transform: translateX(7px); }
+  }
+
+  /* ข้อความที่ขึ้นเมื่อกดปุ่ม "ไม่เป็น" */
+  .warn {
+    min-height: 1.6em;
+    margin-top: 18px;
+    font-weight: 600;
+    color: var(--pink-deep);
+  }
+
+  /* ===== 5) หน้าที่ 2 (หลังกด "เป็น") ===== */
+  .hidden { display: none; }
+  .promise {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    text-align: left;
+    background: #fff;
+    border-radius: 22px;
+    padding: 20px 22px;
+    box-shadow: inset 0 0 0 2px var(--pink-soft);
+  }
+  .promise strong { color: var(--pink-deep); }
+  #page2 h1 { margin-bottom: 18px; }
+  #page2 .polaroid { transform: rotate(3deg); }
+
+  /* ถ้าคนเปิดเครื่องตั้งค่าลดการเคลื่อนไหว ให้ปิดแอนิเมชัน */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <!-- ================= หน้าที่ 1: คำถาม ================= -->
+  <section id="page1">
+    <div class="polaroid">
+      <div class="frame">
+        <!-- ใส่รูปเขาตรงนี้ ดูวิธีใส่ในคำอธิบาย (ชื่อไฟล์ต้องตรงกับ photo.jpg) -->
+        <img src="photo.jpg" alt="รูปคนพิเศษ" onerror="this.replaceWith('💗')">
+      </div>
+    </div>
+
+    <h1>เป็นแฟนกับฉันไหม 💗</h1>
+    <p class="sub">ไม่อยากให้มีเด็กนอยแล้ว เป็นแฟนกันนะ</p>
+
+    <div class="buttons">
+      <button class="yes" id="btnYes">เป็น </button>
+      <button class="no" id="btnNo">ไม่เป็น</button>
+    </div>
+
+    <p class="warn" id="warn"></p>
+  </section>
+
+  <!-- ================= หน้าที่ 2: หลังกด "เป็น" ================= -->
+  <section id="page2" class="hidden">
+    <div class="polaroid">
+      <div class="frame">
+        <img src="photo.jpg" alt="รูปคนพิเศษ" onerror="this.replaceWith('🥰')">
+      </div>
+    </div>
+
+    <h1>เราเป็นแฟนกันแล้วนะ 🥰</h1>
+    <p class="promise">
+       ฉันจะ<strong>ประคับประคองความสัมพันธ์นี้ไปให้นานที่สุด</strong>
+      มีตรงไหนที่ไม่เข้าใจกัน ก็อยากให้ปรับกัน
+      มีอะไรก็<strong>ถามฉัน</strong> อย่าคิดไปเอง และอย่าถามไพ่!! 💗 เองเข้ามาเป็นสีสันในชีวิตฉันและอยากให้เป็นอย่างนี้ต่อไป รักเองนะ
+    </p>
+  </section>
+
+</div>
+
+<script>
+  /* ===== หัวใจลอยพื้นหลัง ===== */
+  const emojis = ['💗', '💕', '🌸', '✨', '💖', '🎀'];
+  function spawn(count) {
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('span');
+      el.className = 'floaty';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = 16 + Math.random() * 26 + 'px';
+      el.style.animationDuration = 7 + Math.random() * 9 + 's';
+      el.style.animationDelay = (-Math.random() * 12) + 's';
+      document.body.appendChild(el);
+    }
+  }
+  spawn(18);
+
+  /* ===== ปุ่ม "ไม่เป็น" → ขึ้นข้อความว่ากดไม่ได้ ===== */
+  const btnNo = document.getElementById('btnNo');
+  const warn = document.getElementById('warn');
+  const msgs = [
+    'ไม่สามารถกดได้นะ 🚫',
+    'บอกว่ากดไม่ได้ไง 😤',
+    'ปุ่มนี้ใช้งานไม่ได้จ้า 🙅‍♀️',
+    'ลองกดปุ่มสีชมพูดูสิ 💕'
+  ];
+  let n = 0;
+  btnNo.addEventListener('click', () => {
+    warn.textContent = msgs[Math.min(n, msgs.length - 1)];
+    n++;
+    btnNo.classList.remove('shake');
+    void btnNo.offsetWidth;          // รีเซ็ตแอนิเมชันให้สั่นได้ซ้ำ
+    btnNo.classList.add('shake');
+  });
+
+  /* ===== ปุ่ม "เป็น" → ไปหน้าที่ 2 + หัวใจพุ่ง ===== */
+  document.getElementById('btnYes').addEventListener('click', () => {
+    document.getElementById('page1').classList.add('hidden');
+    document.getElementById('page2').classList.remove('hidden');
+    spawn(30);
+    window.scrollTo(0, 0);
+  });
+</script>
+
+</body>
+</html>
